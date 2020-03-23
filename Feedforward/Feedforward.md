@@ -3,9 +3,9 @@
 
 **Sparringpartner:** Herber Geeraert
 
-**Projectsamenvatting in max 10 woorden:** schrijf hier jouw samenvatting
+**Projectsamenvatting in max 10 woorden:** Infrared Contactloos Water Fonteintje
 
-**Projecttitel:** plaats hier een catchy werktitel van jouw project
+**Projecttitel:** Non-Contact Water Dispenser
 
 
 # Tips voor feedbackgesprekken
