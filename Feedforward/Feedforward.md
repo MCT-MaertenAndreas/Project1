@@ -1,7 +1,7 @@
 # Projectgegevens
-**VOORNAAM NAAM:**  Plaats hier jouw voornaam & naam.
+**Andreas Maerten**
 
-**Sparringpartner:** schrijf hier de naam van jouw sparring partner. Deze persoon is jouw klankbord, redder in nood, motivator, partner in crime :-)
+**Sparringpartner:** Herber Geeraert
 
 **Projectsamenvatting in max 10 woorden:** schrijf hier jouw samenvatting
 
@@ -30,20 +30,22 @@
 
 # Feedforward gesprekken
 
-## Gesprek 1 (Datum: dd/mm/yyyy)
-Lector: 
+## Gesprek 1 (Datum: 18/03/2020)
+Lector: Dieter & Johan V
 
 Vragen voor dit gesprek:
-- [x] vraag 1:
-- [ ] vraag 2:
+- Geen vragen
 
 Dit is de feedback op mijn vragen. 
-- feedback 1
-- feedback 2
+- X
 
 Hier komt de feedforward: wat ga ik concreet doen?
-- [ ] ToDo 1
-- [ ] ToDo 2
+- X
+
+### Opmerking:
+
+In het algemeen geen opmerkingen, enkel dat er enkele "dt" fouten waren.
+Het project voldeed aan alle vereisten...
 
 ## Gesprek 2 (Datum: dd/mm/yyyy)
 Lector: 
