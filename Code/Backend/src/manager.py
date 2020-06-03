@@ -1,14 +1,20 @@
 from .backend.submanagers.rest import RestManager
 from .backend.submanagers.sensors import SensorManager
 from .backend.util.logger import log
+import time as t
 
 class Manager():
     def __init__(self, debug):
         self.debug = debug
 
     def setup(self):
-        self.sensor_manager = SensorManager()
         self.rest_manager = RestManager(self.debug)
+
+        t.sleep(1.5)
+        self.sensor_manager = SensorManager()
+
+    def register(self):
+        pass
 
     def start(self):
         self.active = True

@@ -65,7 +65,10 @@ class Routing():
 
         @self.app.route('/api/v1/auth/session/', methods=['GET'])
         def verify_session():
-            token = request.headers['Authorization']
+            token = request.headers.get('Authorization')
+
+            if token == None:
+                return error_code[401]
 
             return jsonify(data={'status': self.user_utils.check_token(token)})
 
@@ -77,7 +80,7 @@ class Routing():
 
             return success_code[204]
 
-        @self.app.route('/api/v1/user/register/', methods=['POST'])
+        @self.app.route('/api/v1/users/register/', methods=['POST'])
         def register():
             token = request.json['token']
             user = request.json['user']
@@ -90,3 +93,19 @@ class Routing():
                 return success_code[204]
 
             return error_code[401]
+
+        @self.app.route('/api/v1/sensors/<int:sensor_id>/', methods=['GET', 'PUT', 'POST', 'DELETE'])
+        def sensor(sensor_id=None):
+            print(sensor_id)
+
+        @self.app.route('/api/v1/sensors/<int:sensor_id>/measurements/', methods=['GET', 'POST'])
+        def measurements(sensor_id):
+            pass
+
+        @self.app.route('/api/v1/devices/<int:device_id>/', methods=['GET', 'POST'])
+        def devices(device_id=None):
+            pass
+
+        @self.app.route('/api/v1/devices/<int:device_id>/sensors/', methods=['GET', 'POST'])
+        def device_sensors(device_id):
+            pass

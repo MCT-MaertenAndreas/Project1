@@ -1,12 +1,14 @@
 from threading import Thread, Lock
+from .base_sensor import BaseSensor
 
 import RPi.GPIO as io
 import time as t
 
 from ..util.logger import log
 
-class DistanceSensor(Thread):
-    def __init__(self, echo, trig, autoupdate = False):
+class DistanceSensor(BaseSensor, Thread):
+    def __init__(self, manager, task_type, echo, trig):
+        BaseSensor.__init__(self, manager, 'HC-SR04', task_type)
         Thread.__init__(self)
 
         self.lock = Lock()
