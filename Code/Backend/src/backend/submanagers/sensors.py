@@ -9,7 +9,7 @@ from ..func import get_ip_address
 
 from ..sensors.distance import DistanceSensor
 from ..sensors.rfid_rc522 import RfidSensor
-from ..sensors.mcp_3008 import MCP3008
+from ..sensors.mcp_3008 import Mcp
 
 from ..sensors.lcd1602 import lcd
 
@@ -34,7 +34,8 @@ class SensorManager(Thread):
 
         self.lcd = lcd(0x39)
 
-        self.mcp3008 = MCP3008()
+        self.mcp3008 = Mcp(device=1)
+        self.mcp3008.setup()
 
         self.cleanup = True
 
@@ -54,13 +55,13 @@ class SensorManager(Thread):
 
             t.sleep(3)
 
-            log.info('PHOTORESISTOR', f'Light level: {self.mcp3008.read(0)}')
+            log.info('PHOTORESISTOR', f'Light level: {self.mcp3008.read_channel(0)}')
 
             t.sleep(3)
 
     def print_ip(self):
         self.lcd.lcd_display_string("IP Address:", 1)
-        self.lcd.lcd_display_string(get_ip_address('wlan0'), 2)
+        self.lcd.lcd_display_string(get_ip_address(), 2)
 
     def read_rfid(self):
         while True:

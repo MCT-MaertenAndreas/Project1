@@ -4,13 +4,21 @@ from flask import jsonify
 import logging
 
 from .http_response_codes import error_code, success_code
+
 from ..structs.user import User
+from ..structs.device import Device
+from ..structs.sensor import Sensor
+
+from ..func import get_ip_address
 from ..util.logger import log
 
 class Routing():
     def __init__(self, main, debug = False):
         self.main = main
         self.debug = debug
+
+        self.device = Device(main.db)
+        self.sensor = Sensor(main.db)
 
         self.app = Flask(__name__)
 
@@ -37,6 +45,10 @@ class Routing():
         @self.app.route('/')
         def root():
             return error_code[403]
+
+        @self.app.route('/api/v1/status/ip/', methods=['GET'])
+        def get_ip():
+            return jsonify(ip=get_ip_address())
 
         @self.app.route('/api/v1/auth/login/', methods=['POST'])
         def login():
@@ -95,17 +107,46 @@ class Routing():
             return error_code[401]
 
         @self.app.route('/api/v1/sensors/<int:sensor_id>/', methods=['GET', 'PUT', 'POST', 'DELETE'])
-        def sensor(sensor_id=None):
+        def sensor(sensor_id=-1):
             print(sensor_id)
+
+            return success_code[204]
 
         @self.app.route('/api/v1/sensors/<int:sensor_id>/measurements/', methods=['GET', 'POST'])
         def measurements(sensor_id):
             pass
 
-        @self.app.route('/api/v1/devices/<int:device_id>/', methods=['GET', 'POST'])
-        def devices(device_id=None):
-            pass
+        @self.app.route('/api/v1/devices/', methods=['GET', 'POST'])
+        def devices():
+            if request.method == 'GET':
+                devices = self.device.get_all()
+                return jsonify(devices)
+            return error_code[405]
+
+        @self.app.route('/api/v1/devices/<int:device_id>/', methods=['GET'])
+        def device(device_id=-1):
+            if request.method == 'GET':
+                if device_id == -1:
+                    return error_code[400]
+
+                device = self.device.get(device_id)
+
+                if device == None:
+                    return error_code[404]
+                return jsonify(device)
+
+            return error_code[405]
 
         @self.app.route('/api/v1/devices/<int:device_id>/sensors/', methods=['GET', 'POST'])
-        def device_sensors(device_id):
-            pass
+        def device_sensors(device_id=-1):
+            if request.method == 'GET':
+                if device_id == -1:
+                    return error_code[400]
+
+                sensors = self.device.get_sensors(device_id)
+
+                if sensors == None:
+                    return error_code[404]
+                return jsonify(sensors)
+
+            return error_code[405]

@@ -17,8 +17,8 @@ class RestManager(Thread):
         # Since this thread doesn't need cleanup we can just kill it
         self.daemon = True
 
-        self.routing = Routing(self, debug)
         self.db = Database(db_config, debug)
+        self.routing = Routing(self, debug)
 
         self.user_utils = UserUtils(self.db)
 
