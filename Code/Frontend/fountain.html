@@ -1,0 +1,162 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Fountain</title>
+    <link rel="stylesheet" href="css/fa/css/all.min.css">
+    <link rel="stylesheet" href="css/fountain.css">
+    <link rel="stylesheet" href="css/chartist.min.css">
+
+    <script src="js/data.js" charset="utf-8"></script>
+    <script src="js/ip.js" charset="utf-8"></script>
+
+    <script src="js/device.js" charset="utf-8"></script>
+    <script type="text/javascript">
+        const device = new Device();
+
+        document.addEventListener('DOMContentLoaded', () => device.domLookup());
+    </script>
+</head>
+
+<body>
+    <div class="popup-container">
+        <div class="popup">
+            <h1>Caution!</h1>
+
+            <div class="popup-content">
+                <p>Revoking a water fountain's API access will prevent this
+                device from sending new data about it's behaviour to the web interface.</p>
+                <p>Only do this if you know what you're doing!</p>
+            </div>
+
+            <div class="popup-footer">
+                <button class="confirm-revoke">Revoke!</button>
+                <button class="cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="interface-ip">
+            <div class="heading">Interface IP:</div>
+            <div class="ip">xxx.xxx.xxx.xxx</div>
+
+            <div class="revoke">Revoke Token</div>
+        </div>
+
+        <div class="fountain-container">
+            <div class="heading">
+                <h3></h3>
+                <div class="last-updated"></div>
+            </div>
+
+            <div class="inner-container">
+                <div class="notices" style="display: none;">
+                    <h3>Notices:</h3>
+                    <ul>
+
+                    </ul>
+                </div>
+
+                <div class="ct-chart ct-perfect-fourth"></div>
+
+                <div class="actuators">
+                    <h3>Actuators:</h3>
+                    <ul>
+                        <li>Water Pump</li>
+                        <li class="on">On</li>
+                    </ul>
+
+                    <ul>
+                        <li>Buzzer</li>
+                        <li class="off">Off</li>
+                    </ul>
+                </div>
+
+                <div class="actuators">
+                    <h3>Data:</h3>
+                    <ul>
+                        <li>Remaining Water Capacity</li>
+                        <li id="water_reserve" class="on">0ml</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <ul>
+            <li class="active">
+                <a href="devices.html">
+                    <span class="icon">
+                        <i class="fas fa-server"></i>
+                    </span>
+
+                    <span class="text">Devices</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="main.html">
+                    <span class="icon">
+                        <i class="fas fa-home"></i>
+                    </span>
+
+                    <span class="text">Home</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="settings.html">
+                    <span class="icon">
+                        <i class="fas fa-cog"></i>
+                    </span>
+
+                    <span class="text">Settings</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <script src="js/chartist.min.js"></script>
+    <script type="text/javascript">
+        // revoke button
+        const popup = document.getElementsByClassName("popup-container")[0];
+        const button = document.getElementsByClassName("revoke")[0];
+        const cancel = document.getElementsByClassName("cancel")[0];
+        const confirmRevoke = document.getElementsByClassName("confirm-revoke")[0];
+
+        button.addEventListener("click", (e) => {
+            e.preventDefault();
+            popup.style.display = "flex";
+        });
+
+        cancel.addEventListener("click", (e) => {
+            e.preventDefault();
+            popup.style.display = "none";
+        });
+
+        confirmRevoke.addEventListener("click", (e) => {
+            e.preventDefault();
+            popup.style.display = "none";
+        });
+
+        //////////////
+        var data = {
+          // A labels array that can contain any sort of values
+          labels: ["0", "5", "10", "20", "25", "30", "35"],
+          // Our series array that contains series objects or in this case series data arrays
+          series: [
+            [10, 5, 0]
+          ]
+        };
+
+        // Create a new line chart object where as first parameter we pass in a selector
+        // that is resolving to our chart container element. The Second parameter
+        // is the actual data object.
+        new Chartist.Line(".ct-chart", data, { height: 200 });
+    </script>
+</body>
+</html>

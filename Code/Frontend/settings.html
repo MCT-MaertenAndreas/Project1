@@ -1,0 +1,79 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Settings</title>
+    <link rel="stylesheet" href="css/fa/css/all.min.css">
+    <link rel="stylesheet" href="css/settings.css">
+
+    <script src="js/data.js" charset="utf-8"></script>
+    <script src="js/ip.js" charset="utf-8"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="interface-ip">
+            <div class="heading">Interface IP:</div>
+            <div class="ip">xxx.xxx.xxx.xxx</div>
+        </div>
+
+        <div class="settings-container">
+            <div class="text">Change your password.</div>
+            <form method="post" action="">
+                <div class="input-group">
+                    <input type="password" placeholder="Current Password" />
+                </div>
+
+                <div class="input-group">
+                    <input type="password" placeholder="New Password" />
+                </div>
+
+                <div class="input-group">
+                    <input type="password" placeholder="Verify Password" />
+                </div>
+
+                <button type="submit">
+                    <span>Update</span>
+                    <i class="fa fa-chevron-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <ul>
+            <li>
+                <a href="devices.html">
+                    <span class="icon">
+                        <i class="fas fa-server"></i>
+                    </span>
+
+                    <span class="text">Devices</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="main.html">
+                    <span class="icon">
+                        <i class="fas fa-home"></i>
+                    </span>
+
+                    <span class="text">Home</span>
+                </a>
+            </li>
+
+            <li class="active">
+                <a href="settings.html">
+                    <span class="icon">
+                        <i class="fas fa-cog"></i>
+                    </span>
+
+                    <span class="text">Settings</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>

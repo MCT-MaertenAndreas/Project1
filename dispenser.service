@@ -1,0 +1,14 @@
+[Unit]
+Description=Water Dispenser
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=dev
+ExecStart=/home/dev/project1/start.sh
+
+[Install]
+WantedBy=multi-user.target

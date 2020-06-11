@@ -106,36 +106,74 @@ class Routing():
 
             return error_code[401]
 
-        @self.app.route('/api/v1/sensors/<int:sensor_id>/', methods=['GET', 'PUT', 'POST', 'DELETE'])
-        def sensor(sensor_id=-1):
-            print(sensor_id)
+        @self.app.route('/api/v1/sensors/', methods=['GET'])
+        def sensor():
+            sensors = self.sensor.get_all()
+            return jsonify(sensors)
+
+        @self.app.route('/api/v1/sensors/<int:sensor_id>/', methods=['GET'])
+        def sensors(sensor_id=-1):
+            if sensor_id == -1:
+                return error_code[400]
+
+            if request.method == 'GET':
+                sensor = self.sensor.get(sensor_id)
+
+                return jsonify(sensor)
 
             return success_code[204]
 
         @self.app.route('/api/v1/sensors/<int:sensor_id>/measurements/', methods=['GET', 'POST'])
         def measurements(sensor_id):
-            pass
+            if request.method == 'GET':
+                return jsonify(self.sensor.get_measurements())
+
+            id = request.json['sensor_id']
+            value = request.json['value']
+
+            self.sensor.add_measurement(id, value)
+
+            return success_code[204]
 
         @self.app.route('/api/v1/devices/', methods=['GET', 'POST'])
         def devices():
             if request.method == 'GET':
                 devices = self.device.get_all()
                 return jsonify(devices)
-            return error_code[405]
 
-        @self.app.route('/api/v1/devices/<int:device_id>/', methods=['GET'])
+            # POST request
+            token = request.headers.get('Authorization')
+            if token == None:
+                return error_code[401]
+
+            device_id = self.device.verify_api_token(token)
+
+            if device_id == None:
+                return jsonify(device_id=-1)
+            return jsonify(device_id)
+
+        @self.app.route('/api/v1/devices/<int:device_id>/', methods=['GET', 'PUT'])
         def device(device_id=-1):
-            if request.method == 'GET':
-                if device_id == -1:
-                    return error_code[400]
+            if device_id == -1:
+                return error_code[400]
 
+            if request.method == 'GET':
                 device = self.device.get(device_id)
 
                 if device == None:
                     return error_code[404]
                 return jsonify(device)
 
-            return error_code[405]
+            value = request.json.get('decline')
+
+            if value == None:
+                reservoir_size = request.json.get('reservoir_size')
+
+                self.device.set_reservoir(device_id, reservoir_size)
+            else:
+                self.device.subtract_reservoir(device_id, value)
+
+            return success_code[204]
 
         @self.app.route('/api/v1/devices/<int:device_id>/sensors/', methods=['GET', 'POST'])
         def device_sensors(device_id=-1):
@@ -145,8 +183,6 @@ class Routing():
 
                 sensors = self.device.get_sensors(device_id)
 
-                if sensors == None:
-                    return error_code[404]
                 return jsonify(sensors)
 
             return error_code[405]

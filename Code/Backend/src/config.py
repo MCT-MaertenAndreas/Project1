@@ -5,3 +5,8 @@ db_config = {
     'port': '3306',
     'database': 'water_dispenser'
 }
+
+rest = {
+    'host': 'http://localhost',
+    'token': 'test_token'
+}

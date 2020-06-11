@@ -1,0 +1,136 @@
+@font-face {
+  font-family: "Sansation";
+  src: url("../fonts/Sansation/Sansation_Regular.ttf");
+  font-weight: normal;
+}
+@font-face {
+  font-family: "Sansation";
+  src: url("../fonts/Sansation/Sansation_Bold.ttf");
+  font-weight: bold;
+}
+@font-face {
+  font-family: "Sansation";
+  src: url("../fonts/Sansation/Sansation_Italic.ttf");
+  font-style: italic;
+}
+@font-face {
+  font-family: "Roboto";
+  src: url("../fonts/Roboto/Roboto-Regular.ttf");
+  font-weight: normal;
+}
+@font-face {
+  font-family: "Roboto";
+  src: url("../fonts/Roboto/Roboto-Bold.ttf");
+  font-weight: bold;
+}
+@font-face {
+  font-family: "Roboto";
+  src: url("../fonts/Roboto/Roboto-Italic.ttf");
+  font-style: italic;
+}
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: "Sansation", sans-serif, verdana;
+  font-size: 0.95em;
+  color: #707070;
+  background-color: #FAFAFA;
+  line-height: 1.5;
+}
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.container {
+  width: 90%;
+  margin: 0 auto;
+  overflow-y: auto;
+}
+.container > .interface-ip {
+  margin: 1em 0 3em 0;
+  display: flex;
+}
+.container > .interface-ip > .ip {
+  color: #000;
+  margin-left: 1em;
+}
+.container > .cards {
+  padding: 1em 0;
+}
+.container > .cards > ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+.container > .cards > ul > li {
+  margin-bottom: 2em;
+  background-color: #FFF;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.09);
+  border-radius: 5px;
+}
+.container > .cards > ul > li:last-child {
+  margin-bottom: 6em;
+}
+.container > .cards > ul > li > a {
+  display: block;
+  padding: 1em;
+}
+.container > .cards > ul > li > a > .icon {
+  margin-bottom: 2em;
+}
+.container > .cards > ul > li > a > .icon > .fas {
+  font-size: 2em;
+}
+.container > .cards > ul > li > a > .content > .heading > h3 {
+  font-weight: normal;
+  margin: 0 0 0.25em 0;
+  color: #000;
+}
+
+.bottom-nav {
+  background-color: #FFF;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  font-family: "Roboto", "Sansation", sans-serif;
+}
+.bottom-nav > ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: space-around;
+}
+.bottom-nav > ul > li {
+  padding: 0.75em 0;
+  text-align: center;
+}
+.bottom-nav > ul > li > a {
+  display: block;
+  transition: color 0.2s ease;
+}
+.bottom-nav > ul > li > a:hover {
+  color: #000;
+}
+.bottom-nav > ul > li > a > .icon {
+  display: block;
+  width: 100%;
+  margin-bottom: 0.25em;
+}
+.bottom-nav > ul > li > a > .icon > .fal, .bottom-nav > ul > li > a > .icon > .fa, .bottom-nav > ul > li > a > .icon > .far, .bottom-nav > ul > li > a > .icon > .fas {
+  font-size: 1.4em;
+}
+.bottom-nav > ul > li.active > a {
+  color: #000;
+}
+
+/*# sourceMappingURL=main.css.map */

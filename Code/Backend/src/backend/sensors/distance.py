@@ -1,20 +1,20 @@
 from threading import Thread, Lock
-from .base_sensor import BaseSensor
 
 import RPi.GPIO as io
 import time as t
 
 from ..util.logger import log
 
-class DistanceSensor(BaseSensor, Thread):
-    def __init__(self, manager, task_type, echo, trig):
-        BaseSensor.__init__(self, manager, 'HC-SR04', task_type)
+class DistanceSensor(Thread):
+    def __init__(self, echo, trig):
         Thread.__init__(self)
 
         self.lock = Lock()
 
         self.echo = echo
         self.trig = trig
+
+        self.avg_size = 3
 
         self.measurements = []
 
@@ -35,7 +35,7 @@ class DistanceSensor(BaseSensor, Thread):
                 distance = self.get_current_distance()
                 if distance != -1:
                     self.measurements.append(distance)
-                if len(self.measurements) > 5:
+                if len(self.measurements) > self.avg_size:
                     self.measurements.pop(0)
                 self.lock.release()
                 t.sleep(2)
@@ -49,9 +49,9 @@ class DistanceSensor(BaseSensor, Thread):
         io.output(self.trig, io.LOW)
 
         while io.input(self.echo) == 0:
-            start_time = t.time()
+            start_time = t.time_ns()
         while io.input(self.echo) == 1:
-            end_time = t.time()
+            end_time = t.time_ns()
 
         try:
             duration = end_time - start_time
@@ -60,12 +60,12 @@ class DistanceSensor(BaseSensor, Thread):
         except Exception as e:
             raise Exception(e)
 
-        return round(duration * 17150, 2)
+        return round(duration * 17150 / 1000000000, 2)
 
 
     # will give the last known value which was updated async
     def get_last_distance(self):
-        if len(self.measurements) < 5:
+        if len(self.measurements) < self.avg_size:
             return -1
         while self.lock.acquire(False) == False:
             t.sleep(0.001)

@@ -10,19 +10,17 @@ class Manager():
     def setup(self):
         self.rest_manager = RestManager(self.debug)
 
-        t.sleep(1.5)
         self.sensor_manager = SensorManager()
-
-    def register(self):
-        pass
 
     def start(self):
         self.active = True
 
         self.setup()
 
-        self.sensor_manager.start()
         self.rest_manager.start()
+
+        t.sleep(2.5)
+        #self.sensor_manager.start()
 
     def stop(self, exception = False):
         log.info('MANAGER', 'Killing all threads...')
