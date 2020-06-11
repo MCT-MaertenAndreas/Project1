@@ -85,12 +85,12 @@ class Device {
     }
 
     setContent() {
-        this.title.innerHTML = `Last refilled ${this.device.name}`;
+        this.title.innerHTML = this.device.name;
 
         let date = new Date(this.device.last_refilled);
         date.setHours(date.getHours() - 2);
 
-        this.last_updated.innerHTML = this.prettyDate(date);
+        this.last_updated.innerHTML = `Last refilled ${this.prettyDate(date)}`;
 
         if (Date.now() - date.getTime() > 1.21e9) {
             this.notice_container.style = 'display: initial';

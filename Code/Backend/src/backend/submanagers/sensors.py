@@ -67,7 +67,7 @@ class SensorManager(Thread):
 
         self.device['reservoir_size'] -= decrease
 
-        self.set_lcd_buffers("Reservoir Size:", self.device['reservoir_size'])
+        #self.set_lcd_buffers("Reservoir Size:", self.device['reservoir_size'])
 
         headers = {
             'Authorization': rest['token'],
@@ -154,10 +154,10 @@ class SensorManager(Thread):
                 self.case_open = True
                 self.case_open_time = t.time()
 
-                self.set_lcd_buffers("   Case Open", "     !!!!!")
-
             if t.time() - self.case_open_time > 10 and not self.authorized:
                 self.buzzer.enable()
+
+                self.set_lcd_buffers("   Case Open", "     !!!!!")
 
         else:
             self.authorized = False
