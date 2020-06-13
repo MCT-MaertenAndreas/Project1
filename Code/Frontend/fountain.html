@@ -23,16 +23,14 @@
 <body>
     <div class="popup-container">
         <div class="popup">
-            <h1>Caution!</h1>
+            <h1>Refill Fountain</h1>
 
             <div class="popup-content">
-                <p>Revoking a water fountain's API access will prevent this
-                device from sending new data about it's behaviour to the web interface.</p>
-                <p>Only do this if you know what you're doing!</p>
+                <p>Set the new reservoir size before clicking "<b>Refill</b>", this way the device knows it can start serving water again.</p>
             </div>
 
             <div class="popup-footer">
-                <button class="confirm-revoke">Revoke!</button>
+                <button class="confirm-revoke">Refill</button>
                 <button class="cancel">Cancel</button>
             </div>
         </div>
@@ -43,7 +41,7 @@
             <div class="heading">Interface IP:</div>
             <div class="ip">xxx.xxx.xxx.xxx</div>
 
-            <div class="revoke">Revoke Token</div>
+            <div class="revoke">Refill</div>
         </div>
 
         <div class="fountain-container">
@@ -62,17 +60,9 @@
 
                 <div class="ct-chart ct-perfect-fourth"></div>
 
-                <div class="actuators">
-                    <h3>Actuators:</h3>
-                    <ul>
-                        <li>Water Pump</li>
-                        <li class="on">On</li>
-                    </ul>
+                <div id="device_states" class="actuators">
+                    <h3>Device States:</h3>
 
-                    <ul>
-                        <li>Buzzer</li>
-                        <li class="off">Off</li>
-                    </ul>
                 </div>
 
                 <div class="actuators">

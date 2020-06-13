@@ -67,7 +67,7 @@ class Database(object):
         con, cur = self.connect()
 
         try:
-            self.execute(sqlQuery, params)
+            cur.execute(sqlQuery, params)
             con.commit()
 
             result = self.cursor.lastrowid #bevestigig van create (int of 0)

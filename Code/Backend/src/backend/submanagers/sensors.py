@@ -26,9 +26,15 @@ class SensorManager(Thread):
         self.daemon = True
         self.cleanup = False
 
+        self.lock = Lock()
+
         self.authorized = False
         self.case_open = False
         self.last_state = not self.case_open
+
+        self.cup_detected = False
+        self.cup_tick = 0
+        self.cup_last_tick = t.time() + 1
 
         self.case_open_update = 0
         self.pump_start_time = 0
@@ -62,10 +68,8 @@ class SensorManager(Thread):
                 return sensor['sensor_id']
         return None
 
-    def update_reservoir(self, time_on):
-        decrease = time_on / 60 * 100
-
-        self.device['reservoir_size'] -= decrease
+    def update_reservoir(self):
+        self.device['reservoir_size'] -= 100
 
         #self.set_lcd_buffers("Reservoir Size:", self.device['reservoir_size'])
 
@@ -74,7 +78,7 @@ class SensorManager(Thread):
             'Content-Type': 'application/json'
         }
         data = {
-            'decline': decrease
+            'decline': 100
         }
 
         res = requests.put(f"{rest['host']}/api/v1/devices/{self.device['device_id']}/", headers=headers, json=data)
@@ -132,6 +136,10 @@ class SensorManager(Thread):
         thread.start()
 
         while True:
+            while self.lock.locked():
+                t.sleep(0.0001)
+            self.lock.acquire()
+
             if t.time() - self.lcd_buffer_update >= 15:
                 self.set_lcd_buffers("IP Address:", get_ip_address())
 
@@ -139,7 +147,10 @@ class SensorManager(Thread):
 
             self.check_cup()
 
-            t.sleep(0.1)
+            self.fill_cup_tick()
+
+            self.lock.release()
+            t.sleep(0.01)
 
     def check_case_open(self):
         if t.time() - self.case_check < 1:
@@ -185,27 +196,48 @@ class SensorManager(Thread):
             return
 
         if distance <= 7.5:
-            self.pump.enable()
+            if t.time() - self.cup_last_tick >= 5 and self.device['reservoir_size'] > 0:
+                self.cup_detected = True
 
-            self.pump_start_time = t.time()
+                log.info('PUMP', 'Enabling...')
 
-            self.pump_state = True
-        else:
-            if self.pump_start_time != 0:
-                self.update_reservoir(t.time() - self.pump_start_time)
-
-                self.pump_start_time = 0
-
+        elif self.pump.state:
             self.pump.disable()
 
-            self.pump_state = False
-
         if t.time() - self.pump_update_time >= 1:
-            self.upload_measurement(self.pump.id, self.pump_state)
+            self.upload_measurement(self.pump.id, self.pump.state)
 
             self.upload_measurement(self.cup_detector.id, distance)
 
             self.pump_update_time = t.time()
+
+    def fill_cup_tick(self):
+        if self.cup_detected:
+            if self.cup_tick == 0:
+                self.set_lcd_buffers('Filling cup...', 'Don\'t remove!')
+
+                self.cup_last_tick = t.time() - 1
+            self.pump.enable()
+
+            if self.cup_tick >= 60:
+                log.info('PUMP', 'Done filling, stopping...')
+
+                self.pump.disable()
+
+                self.update_reservoir()
+
+                self.set_lcd_buffers('For more', 'keep cup, 5 sec.')
+
+                self.cup_detected = False
+                self.cup_tick = 0
+                self.cup_last_tick = t.time() + 1
+
+            if t.time() - self.cup_last_tick >= 1:
+                log.info('PUMP', f"Tick: {self.cup_tick}")
+
+                self.cup_tick += int(t.time() - self.cup_last_tick)
+                self.cup_last_tick = t.time()
+
 
     def set_lcd_buffers(self, a1, a2):
         condition = True
@@ -223,6 +255,9 @@ class SensorManager(Thread):
 
 
     def set_lcd_info(self, a1, a2):
+        if self.pump.state:
+            return
+
         self.lcd.lcd_write(0x01)
 
         self.lcd.lcd_display_string(a1, 1)
@@ -239,8 +274,14 @@ class SensorManager(Thread):
 
                 self.buzzer.disable()
 
+                while self.lock.locked():
+                    t.sleep(0.00001)
+                self.lock.acquire()
+
                 self.case_open = False
                 self.authorized = True
+
+                self.lock.release()
             else:
                 log.info('RFID', f"No card to scan. Trying again...")
 

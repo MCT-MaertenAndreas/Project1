@@ -31,9 +31,9 @@ class Device {
             notice_container: document.querySelector('.notices'),
             notice_list: document.querySelector('.notices > ul'),
 
-            actuators: document.getElementsByClassName('actuators')[0],
+            actuators: document.getElementById('device_states'),
 
-            data: document.getElementsByClassName('actuators')[1],
+            data: document.getElementById('device_states'),
 
             water_reserve: document.getElementById('water_reserve')
         });
@@ -52,6 +52,31 @@ class Device {
             this.setContent();
         }
         this.ready = true;
+    }
+
+    async getMeasurementsBySensorId(id) {
+        const res = await Data.get(`/api/v1/sensors/${id}/measurements/`);
+
+        return res.json();
+    }
+
+    getSensorByTaskAndTypeId(task, typeId) {
+        for (const sensor of this.sensors) {
+            if (sensor.task_name == task && sensor.type == typeId) return sensor;
+        }
+
+        return -1;
+    }
+
+    async getSensorOnOffState(sensor) {
+        const
+            result = await this.getMeasurementsBySensorId(sensor.sensor_id),
+            state = result[0].value == 0 ? 'Off' : 'On';
+
+        return `<ul>
+            <li>${sensor.name}</li>
+            <li class="${state.toLowerCase()}">${state}</li>
+        </ul>`;
     }
 
     prettyDate(date) {
@@ -84,13 +109,13 @@ class Device {
         return Math.floor(seconds) + " seconds";
     }
 
-    setContent() {
+    async setContent() {
         this.title.innerHTML = this.device.name;
 
         let date = new Date(this.device.last_refilled);
         date.setHours(date.getHours() - 2);
 
-        this.last_updated.innerHTML = `Last refilled ${this.prettyDate(date)}`;
+        this.last_updated.innerHTML = `Last refilled ${this.prettyDate(date)} ago`;
 
         if (Date.now() - date.getTime() > 1.21e9) {
             this.notice_container.style = 'display: initial';
@@ -100,5 +125,15 @@ class Device {
         }
 
         this.water_reserve.innerHTML = `${this.device.reservoir_size} ml`;
+
+        const
+            water_pump = this.getSensorByTaskAndTypeId('pump', 8),
+            buzzer = this.getSensorByTaskAndTypeId('alarm', 10),
+
+            water_pump_state = await this.getSensorOnOffState(water_pump),
+            buzzer_state = await this.getSensorOnOffState(buzzer);
+
+        this.actuators.insertAdjacentHTML('beforeend', water_pump_state);
+        this.actuators.insertAdjacentHTML('beforeend', buzzer_state);
     }
 }

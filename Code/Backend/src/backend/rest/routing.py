@@ -126,7 +126,7 @@ class Routing():
         @self.app.route('/api/v1/sensors/<int:sensor_id>/measurements/', methods=['GET', 'POST'])
         def measurements(sensor_id):
             if request.method == 'GET':
-                return jsonify(self.sensor.get_measurements())
+                return jsonify(self.sensor.get_measurements(sensor_id))
 
             id = request.json['sensor_id']
             value = request.json['value']
@@ -171,6 +171,7 @@ class Routing():
 
                 self.device.set_reservoir(device_id, reservoir_size)
             else:
+                print(device_id, value)
                 self.device.subtract_reservoir(device_id, value)
 
             return success_code[204]

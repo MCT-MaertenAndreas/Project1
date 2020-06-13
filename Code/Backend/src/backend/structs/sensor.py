@@ -13,4 +13,4 @@ class Sensor():
 
     def get_measurements(self, id):
         # return max 1 day
-        return self.db.get_rows('SELECT * FROM core_measurement WHERE created_on >= DATE(NOW()) - INTERVAL 1 DAY AND sensor_id=%s ORDER BY measurement_id DESC')
+        return self.db.get_rows('SELECT * FROM core_measurement WHERE created_on >= DATE(NOW()) - INTERVAL 1 WEEK AND sensor_id=%s ORDER BY measurement_id DESC', [id])
