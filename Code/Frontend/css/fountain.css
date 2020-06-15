@@ -201,7 +201,6 @@ a {
 }
 .container > .fountain-container > .inner-container > .ct-chart {
   margin: 2em -1em;
-  height: 14em;
 }
 .container > .fountain-container > .inner-container > .actuators {
   border-top: 1px solid rgba(0, 0, 0, 0.1);
@@ -273,6 +272,76 @@ a {
 }
 .bottom-nav > ul > li.active > a {
   color: #000;
+}
+
+.ct-label.ct-horizontal.ct-end {
+    transform: rotate(45deg);
+
+    white-space: nowrap;
+}
+.ct-point {
+    stroke-width: 4px !important;
+}
+.ct-line {
+    stroke-width: 2px !important;
+}
+
+.ct-legend {
+   position: relative;
+   z-index: 10;
+}
+.ct-legend li {
+   position: relative;
+   padding-left: 23px;
+   margin-right: 10px;
+   margin-bottom: 3px;
+   cursor: pointer;
+   display: inline-block;
+}
+.ct-legend li:before {
+   width: 12px;
+   height: 12px;
+   position: absolute;
+   left: 0;
+   content: '';
+   border: 3px solid transparent;
+   border-radius: 2px;
+}
+.ct-legend li.inactive:before {
+   background: transparent;
+}
+.ct-legend.ct-legend-inside {
+   position: absolute;
+   top: 0;
+   right: 0;
+}
+.ct-legend.ct-legend-inside li{
+   display: block;
+   margin: 0;
+}
+.ct-legend .ct-series-0:before {
+   background-color: #d70206;
+   border-color: #d70206;
+}
+.ct-legend .ct-series-1:before {
+   background-color: #f05b4f;
+   border-color: #f05b4f;
+}
+.ct-legend .ct-series-2:before {
+   background-color: #f4c63d;
+   border-color: #f4c63d;
+}
+.ct-legend .ct-series-3:before {
+   background-color: #d17905;
+   border-color: #d17905;
+}
+.ct-legend .ct-series-4:before {
+   background-color: #453d3f;
+   border-color: #453d3f;
+}
+
+.ct-perfect-fourth>svg {
+    height: 230px !important;
 }
 
 @keyframes popupAnimation {

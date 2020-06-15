@@ -5,9 +5,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Fountain</title>
+
     <link rel="stylesheet" href="css/fa/css/all.min.css">
     <link rel="stylesheet" href="css/fountain.css">
     <link rel="stylesheet" href="css/chartist.min.css">
+    <link rel="stylesheet" href="css/chartist.legend.css">
+
+    <script src="js/chartist.min.js"></script>
+    <script src="js/chartist.legend.js" charset="utf-8"></script>
 
     <script src="js/data.js" charset="utf-8"></script>
     <script src="js/ip.js" charset="utf-8"></script>
@@ -110,9 +115,8 @@
         </ul>
     </div>
 
-    <script src="js/chartist.min.js"></script>
+
     <script type="text/javascript">
-        // revoke button
         const popup = document.getElementsByClassName("popup-container")[0];
         const button = document.getElementsByClassName("revoke")[0];
         const cancel = document.getElementsByClassName("cancel")[0];
@@ -132,21 +136,6 @@
             e.preventDefault();
             popup.style.display = "none";
         });
-
-        //////////////
-        var data = {
-          // A labels array that can contain any sort of values
-          labels: ["0", "5", "10", "20", "25", "30", "35"],
-          // Our series array that contains series objects or in this case series data arrays
-          series: [
-            [10, 5, 0]
-          ]
-        };
-
-        // Create a new line chart object where as first parameter we pass in a selector
-        // that is resolving to our chart container element. The Second parameter
-        // is the actual data object.
-        new Chartist.Line(".ct-chart", data, { height: 200 });
     </script>
 </body>
 </html>

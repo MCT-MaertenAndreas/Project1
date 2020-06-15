@@ -135,6 +135,10 @@ class Routing():
 
             return success_code[204]
 
+        @self.app.route('/api/v1/sensors/<int:sensor_id>/measurements/last/', methods=['GET'])
+        def last_measurement(sensor_id):
+            return jsonify(self.sensor.get_last_measurement(sensor_id))
+
         @self.app.route('/api/v1/devices/', methods=['GET', 'POST'])
         def devices():
             if request.method == 'GET':

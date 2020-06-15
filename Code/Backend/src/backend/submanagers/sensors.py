@@ -19,6 +19,8 @@ from ..sensors.lcd1602 import lcd
 
 from ..util.logger import log
 
+update_interval = 1
+
 class SensorManager(Thread):
     def __init__(self):
         Thread.__init__(self)
@@ -182,7 +184,7 @@ class SensorManager(Thread):
 
             self.last_state = self.case_open
 
-        if t.time() - self.case_open_update >= 1:
+        if t.time() - self.case_open_update >= update_interval:
             self.upload_measurement(self.mcp3008.id, light_level)
 
             self.upload_measurement(self.buzzer.id, self.case_open)
@@ -204,7 +206,7 @@ class SensorManager(Thread):
         elif self.pump.state:
             self.pump.disable()
 
-        if t.time() - self.pump_update_time >= 1:
+        if t.time() - self.pump_update_time >= update_interval:
             self.upload_measurement(self.pump.id, self.pump.state)
 
             self.upload_measurement(self.cup_detector.id, distance)
