@@ -194,6 +194,11 @@ class SensorManager(Thread):
     def check_cup(self):
         distance = self.cup_detector.get_last_distance()
 
+        if self.device['reservoir_size'] <= 0:
+            self.led['red'].enable()
+
+            return
+
         if distance == -1:
             return
 
@@ -202,6 +207,8 @@ class SensorManager(Thread):
                 self.cup_detected = True
 
                 log.info('PUMP', 'Enabling...')
+            else:
+                self.led['yellow'].enable()
 
         elif self.pump.state:
             self.pump.disable()
@@ -225,6 +232,8 @@ class SensorManager(Thread):
                 log.info('PUMP', 'Done filling, stopping...')
 
                 self.pump.disable()
+                self.led['blue'].disable()
+                self.led['yellow'].enable()
 
                 self.update_reservoir()
 
@@ -235,6 +244,11 @@ class SensorManager(Thread):
                 self.cup_last_tick = t.time() + 1
 
             if t.time() - self.cup_last_tick >= 1:
+                if self.cup_tick % 2 == 0:
+                    self.led['blue'].enable()
+                else:
+                    self.led['blue'].disable()
+
                 log.info('PUMP', f"Tick: {self.cup_tick}")
 
                 self.cup_tick += int(t.time() - self.cup_last_tick)
