@@ -1,0 +1,485 @@
+{
+	"info": {
+		"_postman_id": "602b2a0d-2770-4a65-b616-49af783c154f",
+		"name": "Project 1 REST",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"user\": \"Yimura\",\n\t\"password\": \"test1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://192.168.1.62/api/v1/auth/login/",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"62"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Session",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://192.168.1.62/api/v1/auth/session/",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"62"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"session",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout (destroy session)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"token\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://192.168.1.62/api/v1/auth/logout/",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"62"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"logout",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register User",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"token\": \"lIJFHhIqSX5QOnj7CFdIMOTLcvSBUU\",\n\t\n\t\"user\": {\n\t\t\"name\": \"Yimura\",\n\t\t\"email\": \"andreas@damon.sh\",\n\t\t\"password\": \"test1234\"\n\t}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://192.168.1.62/api/v1/user/register/",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"62"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"register",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Devices",
+			"item": [
+				{
+					"name": "Get Device Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://192.168.1.62/api/v1/devices/1/",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"62"
+							],
+							"path": [
+								"api",
+								"v1",
+								"devices",
+								"1",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Devices",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://192.168.1.62/api/v1/devices/",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"62"
+							],
+							"path": [
+								"api",
+								"v1",
+								"devices",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Device Sensors",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://192.168.137.188/api/v1/devices/1/sensors/",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"137",
+								"188"
+							],
+							"path": [
+								"api",
+								"v1",
+								"devices",
+								"1",
+								"sensors",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Device ID from API token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "test_token",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://169.254.10.1/api/v1/devices/",
+							"protocol": "http",
+							"host": [
+								"169",
+								"254",
+								"10",
+								"1"
+							],
+							"path": [
+								"api",
+								"v1",
+								"devices",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Decrease Water Reservoir",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"decline\": 100\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://192.168.1.62/api/v1/devices/1/",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"62"
+							],
+							"path": [
+								"api",
+								"v1",
+								"devices",
+								"1",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refill Device Water Reservoir",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"reservoir_size\": 1000\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://192.168.137.203/api/v1/devices/1/",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"137",
+								"203"
+							],
+							"path": [
+								"api",
+								"v1",
+								"devices",
+								"1",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Sensors",
+			"item": [
+				{
+					"name": "Get All Sensors",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://192.168.1.62/api/v1/sensors/",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"62"
+							],
+							"path": [
+								"api",
+								"v1",
+								"sensors",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Sensor Measurement",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "test_token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"sensor_id\": 6,\r\n    \"value\": 250\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://192.168.1.62/api/v1/sensors/6/measurements/",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"62"
+							],
+							"path": [
+								"api",
+								"v1",
+								"sensors",
+								"6",
+								"measurements",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Sensor Measurements",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://192.168.1.62/api/v1/sensors/7/measurements/",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"62"
+							],
+							"path": [
+								"api",
+								"v1",
+								"sensors",
+								"7",
+								"measurements",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Global Settings",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://192.168.137.203/api/v1/settings/",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"137",
+						"203"
+					],
+					"path": [
+						"api",
+						"v1",
+						"settings",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Settings",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"distance_sensor_sens\": 7.5,\r\n    \"light_sensor_sens\": 75\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.137.203/api/v1/settings/",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"137",
+						"203"
+					],
+					"path": [
+						"api",
+						"v1",
+						"settings",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
