@@ -106,6 +106,15 @@ class Routing():
 
             return error_code[401]
 
+        @self.app.route('/api/v1/settings/', methods=['GET', 'PUT'])
+        def settings():
+            if request.method == 'GET':
+                return jsonify(self.main.db.get_one_row('SELECT * FROM core_settings LIMIT 1'))
+
+            self.main.db.execute_sql('UPDATE core_settings SET distance_sensor_sens=%s, light_sensor_sens=%s WHERE setting_id=1', [request.json['distance_sensor_sens'], request.json['light_sensor_sens']])
+
+            return success_code[204]
+
         @self.app.route('/api/v1/sensors/', methods=['GET'])
         def sensor():
             sensors = self.sensor.get_all()
@@ -175,7 +184,6 @@ class Routing():
 
                 self.device.set_reservoir(device_id, reservoir_size)
             else:
-                print(device_id, value)
                 self.device.subtract_reservoir(device_id, value)
 
             return success_code[204]

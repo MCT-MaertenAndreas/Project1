@@ -15,7 +15,7 @@ class Device():
         return self.db.execute_sql('UPDATE core_devices SET reservoir_size=%s, reservoir_filled=%s WHERE device_id=%s', [reservoir_size, reservoir_size, id])
 
     def subtract_reservoir(self, id, value):
-        return self.db.execute_sql('UPDATE core_devices SET reservoir_size=reservoir_size-%s WHERE device_id=%s', [value, id])
+        return self.db.execute_sql('UPDATE core_devices SET reservoir_size=reservoir_size-%s, last_refilled=last_refilled WHERE device_id=%s', [value, id])
 
     def verify_api_token(self, token):
         return self.db.get_one_row('SELECT core_devices.device_id FROM core_devices INNER JOIN core_tokens ON core_devices.token_id=core_tokens.token_id WHERE core_tokens.token=%s AND core_tokens.token_type=2', [token])

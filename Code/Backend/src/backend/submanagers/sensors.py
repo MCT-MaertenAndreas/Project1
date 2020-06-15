@@ -20,6 +20,7 @@ from ..sensors.lcd1602 import lcd
 from ..util.logger import log
 
 update_interval = 1
+verbose_log = False
 
 class SensorManager(Thread):
     def __init__(self):
@@ -46,23 +47,38 @@ class SensorManager(Thread):
 
         io.setmode(io.BOARD)
 
-    def register(self):
+    def register(self, refetch = False):
+        if refetch:
+            log.info('DEVICE', 'Refetching device data...')
+
         headers = { 'Authorization': rest['token'] }
 
+        res = requests.get(f"{rest['host']}/api/v1/settings/", headers=headers)
+        settings_json = res.json()
+
         res = requests.post(f"{rest['host']}/api/v1/devices/", headers=headers)
-        json = res.json()
+        temp_json = res.json()
 
-        res = requests.get(f"{rest['host']}/api/v1/devices/{json['device_id']}/")
-        json = res.json()
+        res = requests.get(f"{rest['host']}/api/v1/devices/{temp_json['device_id']}/", headers=headers)
+        device_json = res.json()
 
-        self.device = json
+        res = requests.get(f"{rest['host']}/api/v1/devices/{temp_json['device_id']}/sensors/", headers=headers)
+        sensor_json = res.json()
 
-        log.info('DEVICE', f"Registered device with ID: {json['device_id']}")
+        while self.lock.locked():
+            t.sleep(0.0001)
+        self.lock.acquire()
 
-        res = requests.get(f"{rest['host']}/api/v1/devices/{json['device_id']}/sensors/")
-        json = res.json()
+        if not refetch:
+            log.info('DEVICE', f"Registered device with ID: {temp_json['device_id']}")
 
-        self.sensors = json
+        self.setting = settings_json
+        self.device = device_json
+        self.sensors = sensor_json
+
+        self.last_fetch = t.time()
+
+        self.lock.release()
 
     def getSensorIdByTypeAndTask(self, type, task):
         for sensor in self.sensors:
@@ -72,8 +88,6 @@ class SensorManager(Thread):
 
     def update_reservoir(self):
         self.device['reservoir_size'] -= 100
-
-        #self.set_lcd_buffers("Reservoir Size:", self.device['reservoir_size'])
 
         headers = {
             'Authorization': rest['token'],
@@ -95,10 +109,18 @@ class SensorManager(Thread):
             'value': value
         }
 
-        res = requests.post(f"{rest['host']}/api/v1/sensors/{sensor_id}/measurements/", headers=headers, json=data)
+        thread = Thread(target=self.non_blocking_upload, args=(data,), daemon=True)
+        thread.start()
+
+    def non_blocking_upload(self, data):
+        headers = {
+            'Authorization': rest['token'],
+            'Content-Type': 'application/json'
+        }
+        requests.post(f"{rest['host']}/api/v1/sensors/{data['sensor_id']}/measurements/", headers=headers, json=data)
 
     def run(self):
-        log.info('SENSR', 'Started')
+        log.info('SENSOR_MANAGER', 'Started...')
 
         self.register()
 
@@ -111,7 +133,7 @@ class SensorManager(Thread):
         self.led = {
             'red': BasicIODevice(38, io.OUT),
             'blue': BasicIODevice(36, io.OUT),
-            'green': BasicIODevice(32, io.OUT)
+            'yellow': BasicIODevice(32, io.OUT)
         }
 
         self.rfid = RfidSensor(22)
@@ -134,13 +156,35 @@ class SensorManager(Thread):
         self.loop()
 
     def loop(self):
-        thread = Thread(target = self.read_rfid)
+        thread = Thread(target = self.read_rfid, daemon=True)
         thread.start()
+
+        #while True:
+        #    self.led['red'].enable()
+        #    self.led['yellow'].enable()
+        #    self.led['blue'].enable()
+
+        #    t.sleep(1)
+
+        #    self.led['red'].disable()
+        #    self.led['yellow'].disable()
+        #    self.led['blue'].disable()
+
+        #    t.sleep(1)
 
         while True:
             while self.lock.locked():
                 t.sleep(0.0001)
+            if verbose_log:
+                loop_start = t.time_ns()
+
             self.lock.acquire()
+
+            if t.time() - self.last_fetch >= 10:
+                thread = Thread(target = self.register, args = (True,), daemon=True)
+                thread.start()
+
+                self.last_fetch = t.time()
 
             if t.time() - self.lcd_buffer_update >= 15:
                 self.set_lcd_buffers("IP Address:", get_ip_address())
@@ -152,7 +196,10 @@ class SensorManager(Thread):
             self.fill_cup_tick()
 
             self.lock.release()
-            t.sleep(0.01)
+
+            if verbose_log:
+                log.info('LOOP', f'Took {(t.time_ns() - loop_start) / 1000000}ms')
+            t.sleep(0.001)
 
     def check_case_open(self):
         if t.time() - self.case_check < 1:
@@ -162,7 +209,7 @@ class SensorManager(Thread):
 
         light_level = self.mcp3008.read_channel(0)
 
-        if light_level > 75:
+        if light_level > self.setting['light_sensor_sens']:
             if not self.case_open:
                 self.case_open = True
                 self.case_open_time = t.time()
@@ -202,7 +249,7 @@ class SensorManager(Thread):
         if distance == -1:
             return
 
-        if distance <= 7.5:
+        if distance <= self.setting['distance_sensor_sens']:
             if t.time() - self.cup_last_tick >= 5 and self.device['reservoir_size'] > 0:
                 self.cup_detected = True
 
@@ -274,16 +321,19 @@ class SensorManager(Thread):
         if self.pump.state:
             return
 
-        self.lcd.lcd_write(0x01)
+        try:
+            self.lcd.lcd_write(0x01)
 
-        self.lcd.lcd_display_string(a1, 1)
-        self.lcd.lcd_display_string(a2, 2)
+            self.lcd.lcd_display_string(a1, 1)
+            self.lcd.lcd_display_string(a2, 2)
+        except Exception as e:
+            log.errro('LCD', 'Error while writing CMD')
 
     def read_rfid(self):
         while True:
             log.info('RFID', 'Waiting for Card')
 
-            id = self.rfid.read_id_no_block()
+            id = self.rfid.read_id()
 
             if id != None:
                 log.info('RFID', f"ID: {id}")

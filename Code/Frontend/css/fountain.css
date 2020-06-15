@@ -54,7 +54,7 @@ a {
   vertical-align: middle;
   height: 100vh;
   position: fixed;
-  z-index: 3;
+  z-index: 50;
   display: none;
   animation: popupAnimation 0.2s forwards;
 }
