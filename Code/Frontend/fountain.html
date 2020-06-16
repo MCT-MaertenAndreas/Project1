@@ -32,10 +32,27 @@
 
             <div class="popup-content">
                 <p>Set the new reservoir size before clicking "<b>Refill</b>", this way the device knows it can start serving water again.</p>
+
+                <form id="refill_menu" action="" method="put" onsubmit="return false;">
+                    <label for="input">New reservoir volume:</label>
+                    <input id="input" type="number" min="0" max="2000" name="" placeholder="1000 ml">
+
+                    <button id="forum_submit" type="submit" hidden name="button"></button>
+                </form>
+
+                <script type="text/javascript">
+                    document.getElementById('refill_menu').addEventListener('submit', (e) => {
+                        const value = document.querySelector('#refill_menu > input').value;
+
+                        Data.put(`/api/v1/devices/${device.id}/`, {
+                            "reservoir_size": value
+                        });
+                    });
+                </script>
             </div>
 
             <div class="popup-footer">
-                <button class="confirm-revoke">Refill</button>
+                <button class="confirm-revoke" onclick="document.getElementById('forum_submit').click()">Refill</button>
                 <button class="cancel">Cancel</button>
             </div>
         </div>

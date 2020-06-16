@@ -97,7 +97,10 @@ class SensorManager(Thread):
             'decline': 100
         }
 
-        res = requests.put(f"{rest['host']}/api/v1/devices/{self.device['device_id']}/", headers=headers, json=data)
+        def upload_no_block(headers, data):
+            res = requests.put(f"{rest['host']}/api/v1/devices/{self.device['device_id']}/", headers=headers, json=data)
+
+        thread = Thread(target=upload_no_block, args=(headers, data,))
 
     def upload_measurement(self, sensor_id, value):
         headers = {
@@ -186,7 +189,7 @@ class SensorManager(Thread):
 
                 self.last_fetch = t.time()
 
-            if t.time() - self.lcd_buffer_update >= 15:
+            if t.time() - self.lcd_buffer_update >= 15 and not self.cup_detected:
                 self.set_lcd_buffers("IP Address:", get_ip_address())
 
             self.check_case_open()
@@ -243,14 +246,16 @@ class SensorManager(Thread):
 
         if self.device['reservoir_size'] <= 0:
             self.led['red'].enable()
-
-            return
+        else:
+            self.led['red'].disable()
 
         if distance == -1:
             return
 
         if distance <= self.setting['distance_sensor_sens']:
             if t.time() - self.cup_last_tick >= 5 and self.device['reservoir_size'] > 0:
+                self.led['yellow'].disable()
+
                 self.cup_detected = True
 
                 log.info('PUMP', 'Enabling...')
@@ -259,6 +264,8 @@ class SensorManager(Thread):
 
         elif self.pump.state:
             self.pump.disable()
+
+            self.led['yellow'].disable()
 
         if t.time() - self.pump_update_time >= update_interval:
             self.upload_measurement(self.pump.id, self.pump.state)
@@ -272,23 +279,10 @@ class SensorManager(Thread):
             if self.cup_tick == 0:
                 self.set_lcd_buffers('Filling cup...', 'Don\'t remove!')
 
+                t.sleep(1)
+
                 self.cup_last_tick = t.time() - 1
             self.pump.enable()
-
-            if self.cup_tick >= 60:
-                log.info('PUMP', 'Done filling, stopping...')
-
-                self.pump.disable()
-                self.led['blue'].disable()
-                self.led['yellow'].enable()
-
-                self.update_reservoir()
-
-                self.set_lcd_buffers('For more', 'keep cup, 5 sec.')
-
-                self.cup_detected = False
-                self.cup_tick = 0
-                self.cup_last_tick = t.time() + 1
 
             if t.time() - self.cup_last_tick >= 1:
                 if self.cup_tick % 2 == 0:
@@ -300,11 +294,27 @@ class SensorManager(Thread):
 
                 self.cup_tick += int(t.time() - self.cup_last_tick)
                 self.cup_last_tick = t.time()
+                self.lcd_buffer_update = t.time()
+
+            if self.cup_tick >= 60:
+                log.info('PUMP', 'Done filling, stopping...')
+
+                self.pump.disable()
+                self.led['blue'].disable()
+                self.led['yellow'].disable()
+
+                self.update_reservoir()
+
+                self.cup_detected = False
+                self.cup_tick = 0
+                self.cup_last_tick = t.time() + 1
+
+                t.sleep(1)
+
+                self.set_lcd_buffers('For more', 'keep cup, 5 sec.')
 
 
     def set_lcd_buffers(self, a1, a2):
-        condition = True
-
         buffer = []
 
         if not isinstance(a1, str) or not isinstance(a2, str):

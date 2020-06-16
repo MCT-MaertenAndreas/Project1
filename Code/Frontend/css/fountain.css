@@ -344,6 +344,17 @@ a {
     height: 230px !important;
 }
 
+#input {
+    width: 100%;
+    font-family: inherit;
+    font-size: inherit;
+    border-radius: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    padding: 0.5em;
+    transition: border-color 0.2s ease;
+    outline: none;
+}
+
 @keyframes popupAnimation {
   0% {
     opacity: 0;
